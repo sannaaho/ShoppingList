@@ -1,33 +1,66 @@
 package com.example.shoppinglist;
 
+import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String EXTRA_MESSAGE = "com.example.ShoppingList.MESSAGE";
+    private EditText mEditText;
+    private Button mSaveButton;
+    private Button mDoneButton;
+    private ArrayList<String> Items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        this.Items = new ArrayList<String>();
+        this.mEditText = findViewById(R.id.item_editText);
+        this.mSaveButton = findViewById(R.id.back_button);
+        this.mDoneButton = findViewById(R.id.done_button);
+
+
+        this.mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                String item = mEditText.getText().toString();
+                if(item.length()> 3 && item.length() < 15){
+                    Items.add(item);
+                    Toast.makeText(getApplicationContext(),"Lisätty ostoslistaan",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"Virhe! Yritä uudestaan",Toast.LENGTH_SHORT).show();
+                }
+                mEditText.setText("");
             }
+        });
+        this.mDoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Uuden activityn ShowList avaus
+                Intent myIntent = new Intent(getApplicationContext(),
+                        ShowList.class);
+                String list = "";
+                for(String item : Items) {
+                    list += item + "\n";
+                }
+                myIntent.putExtra(EXTRA_MESSAGE,list);
+                startActivity(myIntent);
+            }
+
         });
     }
 
